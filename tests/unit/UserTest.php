@@ -9,8 +9,8 @@ use Nette\Http\Session;
 use UnitTester;
 use Voonne\Security\InvalidStateException;
 use Voonne\Security\User;
-use Voonne\Voonne\Model\Entities\DomainLanguage;
-use Voonne\Voonne\Model\Repositories\DomainLanguageRepository;
+use Voonne\Voonne\Model\Entities\Domain;
+use Voonne\Voonne\Model\Repositories\DomainRepository;
 use Voonne\Voonne\Model\Repositories\UserRepository;
 
 
@@ -40,7 +40,7 @@ class UserTest extends Unit
 	/**
 	 * @var MockInterface
 	 */
-	private $domainLanguageRepository;
+	private $domainRepository;
 
 	/**
 	 * @var User
@@ -53,13 +53,13 @@ class UserTest extends Unit
 		$this->netteUser = Mockery::mock(\Nette\Security\User::class);
 		$this->session = Mockery::mock(Session::class);
 		$this->userRepository = Mockery::mock(UserRepository::class);
-		$this->domainLanguageRepository = Mockery::mock(DomainLanguageRepository::class);
+		$this->domainRepository = Mockery::mock(DomainRepository::class);
 
 		$this->securityUser = new User(
 			$this->netteUser,
 			$this->session,
 			$this->userRepository,
-			$this->domainLanguageRepository
+			$this->domainRepository
 		);
 	}
 
@@ -105,63 +105,53 @@ class UserTest extends Unit
 	}
 
 
-	public function testGetCurrentDomainLanguageSelected()
+	public function testGetCurrentDomainSelected()
 	{
-		$domainLanguage = Mockery::mock(DomainLanguage::class);
+		$domain = Mockery::mock(Domain::class);
 
 		$this->session->shouldReceive('getSection')
 			->once()
-			->with('voonne.domainLanguage')
+			->with('voonne.domain')
 			->andReturn(['id' => '1']);
 
-		$this->domainLanguageRepository->shouldReceive('find')
+		$this->domainRepository->shouldReceive('find')
 			->once()
 			->with('1')
-			->andReturn($domainLanguage);
+			->andReturn($domain);
 
-		$this->assertEquals($domainLanguage, $this->securityUser->getCurrentDomainLanguage());
+		$this->assertEquals($domain, $this->securityUser->getCurrentDomain());
 	}
 
 
-	public function testGetCurrentDomainLanguageNotSelected()
+	public function testGetCurrentDomainNotSelected()
 	{
-		$domainLanguage1 = Mockery::mock(DomainLanguage::class);
-		$domainLanguage2 = Mockery::mock(DomainLanguage::class);
-
-		$domainLanguage1->shouldReceive('getId')
-			->once()
-			->withNoArgs()
-			->andReturn('1');
+		$domain1 = Mockery::mock(Domain::class);
+		$domain2 = Mockery::mock(Domain::class);
 
 		$this->session->shouldReceive('getSection')
 			->once()
-			->with('voonne.domainLanguage')
+			->with('voonne.domain')
 			->andReturn([]);
 
-		$this->domainLanguageRepository->shouldReceive('findAll')
+		$this->domainRepository->shouldReceive('findAll')
 			->once()
 			->withNoArgs()
-			->andReturn([$domainLanguage1, $domainLanguage2]);
+			->andReturn([$domain1, $domain2]);
 
-		$this->assertEquals($domainLanguage1, $this->securityUser->getCurrentDomainLanguage());
+		$this->assertEquals($domain1, $this->securityUser->getCurrentDomain());
 	}
 
 
-	public function testSetCurrentDomainLanguage()
+	public function testSetCurrentDomain()
 	{
-		$domainLanguage = Mockery::mock(DomainLanguage::class);
-
-		$domainLanguage->shouldReceive('getId')
-			->once()
-			->withNoArgs()
-			->andReturn('1');
+		$domain = Mockery::mock(Domain::class);
 
 		$this->session->shouldReceive('getSection')
 			->once()
-			->with('voonne.domainLanguage')
+			->with('voonne.domain')
 			->andReturn([]);
 
-		$this->securityUser->setCurrentDomainLanguage($domainLanguage);
+		$this->securityUser->setCurrentDomain($domain);
 	}
 
 }

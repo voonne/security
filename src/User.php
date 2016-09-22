@@ -12,9 +12,9 @@ namespace Voonne\Security;
 
 use Nette\Http\Session;
 use Nette\SmartObject;
+use Voonne\Model\IOException;
 use Voonne\Voonne\Model\Entities\Domain;
-use Voonne\Voonne\Model\Entities\DomainLanguage;
-use Voonne\Voonne\Model\Repositories\DomainLanguageRepository;
+use Voonne\Voonne\Model\Repositories\DomainRepository;
 use Voonne\Voonne\Model\Repositories\UserRepository;
 
 
@@ -39,22 +39,22 @@ class User
 	private $userRepository;
 
 	/**
-	 * @var DomainLanguageRepository
+	 * @var DomainRepository
 	 */
-	private $domainLanguageRepository;
+	private $domainRepository;
 
 
 	public function __construct(
 		\Nette\Security\User $user,
 		Session $session,
 		UserRepository $userRepository,
-		DomainLanguageRepository $domainLanguageRepository
+		DomainRepository $domainRepository
 	)
 	{
 		$this->user = $user;
 		$this->session = $session;
 		$this->userRepository = $userRepository;
-		$this->domainLanguageRepository = $domainLanguageRepository;
+		$this->domainRepository = $domainRepository;
 	}
 
 
@@ -64,6 +64,7 @@ class User
 	 * @return \Voonne\Voonne\Model\Entities\User
 	 *
 	 * @throws InvalidStateException
+	 * @throws IOException
 	 */
 	public function getUser()
 	{
@@ -76,51 +77,42 @@ class User
 
 
 	/**
-	 * Returns current domain language for edit.
-	 *
-	 * @return DomainLanguage
-	 */
-	public function getCurrentDomainLanguage()
-	{
-		$section = $this->session->getSection('voonne.domainLanguage');
-
-		if(isset($section['id'])) {
-			return $this->domainLanguageRepository->find($section['id']);
-		} else {
-			$domains = $this->domainLanguageRepository->findAll();
-
-			if(count($domains) == 0) {
-				throw new InvalidStateException('There was no registered domain.');
-			}
-
-			$section['id'] = $domains[0]->getId();
-
-			return $domains[0];
-		}
-	}
-
-
-	/**
 	 * Returns current domain for edit.
 	 *
 	 * @return Domain
 	 */
 	public function getCurrentDomain()
 	{
-		return $this->getCurrentDomainLanguage()->getDomain();
+		$section = $this->session->getSection('voonne.domain');
+
+		if(isset($section['id'])) {
+			try {
+				return $this->domainRepository->find($section['id']);
+			} catch (IOException $e) {}
+		}
+
+		$domains = $this->domainRepository->findAll();
+
+		if(count($domains) == 0) {
+			throw new InvalidStateException('There was no registered domain.');
+		}
+
+		$section['id'] = $domains[0]->getId();
+
+		return $domains[0];
 	}
 
 
 	/**
-	 * Sets current domain language for edit.
+	 * Sets current domain for edit.
 	 *
-	 * @param DomainLanguage $domainLanguage
+	 * @param Domain $domain
 	 */
-	public function setCurrentDomainLanguage(DomainLanguage $domainLanguage)
+	public function setCurrentDomain(Domain $domain)
 	{
-		$section = $this->session->getSection('voonne.domainLanguage');
+		$section = $this->session->getSection('voonne.domain');
 
-		$section['id'] = $domainLanguage->getId();
+		$section['id'] = $domain->getId();
 	}
 
 }

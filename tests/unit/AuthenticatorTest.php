@@ -60,11 +60,6 @@ class AuthenticatorTest extends Unit
 			->withNoArgs()
 			->andReturn('$2y$10$JHDYJjWddFnBdo5jza7vRunAqWOqtZ3vJos92f5R0Vj3aPRNtvM0.');
 
-		$user->shouldReceive('getId')
-			->once()
-			->withNoArgs()
-			->andReturn('1');
-
 		$this->userRepository->shouldReceive('findOneBy')
 			->once()
 			->with(['email' => 'john@example.com'])
