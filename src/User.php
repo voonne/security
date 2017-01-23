@@ -14,6 +14,8 @@ use Nette\Http\Session;
 use Nette\SmartObject;
 use Voonne\Model\IOException;
 use Voonne\Voonne\Model\Entities\Domain;
+use Voonne\Voonne\Model\Entities\Privilege;
+use Voonne\Voonne\Model\Entities\Role;
 use Voonne\Voonne\Model\Repositories\DomainRepository;
 use Voonne\Voonne\Model\Repositories\UserRepository;
 
@@ -43,18 +45,25 @@ class User
 	 */
 	private $domainRepository;
 
+	/**
+	 * @var Authorizator
+	 */
+	private $authorizator;
+
 
 	public function __construct(
 		\Nette\Security\User $user,
 		Session $session,
 		UserRepository $userRepository,
-		DomainRepository $domainRepository
+		DomainRepository $domainRepository,
+		Authorizator $authorizator
 	)
 	{
 		$this->user = $user;
 		$this->session = $session;
 		$this->userRepository = $userRepository;
 		$this->domainRepository = $domainRepository;
+		$this->authorizator = $authorizator;
 	}
 
 
@@ -113,6 +122,61 @@ class User
 		$section = $this->session->getSection('voonne.domain');
 
 		$section['id'] = $domain->getId();
+	}
+
+
+	/**
+	 * Has a user access to the area?
+	 *
+	 * @param string $area
+	 *
+	 * @return bool
+	 */
+	public function haveArea($area)
+	{
+		return $this->authorizator->haveArea($area, $this->getRoles());
+	}
+
+
+	/**
+	 * Has a user access to the resource?
+	 *
+	 * @param string $area
+	 * @param string $resource
+	 *
+	 * @return bool
+	 */
+	public function haveResource($area, $resource)
+	{
+		return $this->authorizator->haveResource($area, $resource, $this->getRoles());
+	}
+
+
+	/**
+	 * Has a user access to the privilege?
+	 *
+	 * @param string $area
+	 * @param string $resource
+	 * @param string $privilege
+	 *
+	 * @return bool
+	 */
+	public function havePrivilege($area, $resource, $privilege)
+	{
+		return $this->authorizator->havePrivilege($area, $resource, $privilege, $this->getRoles());
+	}
+
+
+	private function getRoles()
+	{
+		$roles = [];
+
+		foreach ($this->getUser()->getRoles() as $role) {
+			/** @var Role $role */
+			$roles[] = $role->getName();
+		}
+
+		return $roles;
 	}
 
 }
