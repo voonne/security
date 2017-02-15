@@ -151,9 +151,9 @@ class AuthorizatorTest extends Unit
 		$role2 = Mockery::mock(Role::class);
 
 		$this->zoneRepository->shouldReceive('findAll')
-		                     ->twice()
-		                     ->withNoArgs()
-		                     ->andReturn([$area1, $area2]);
+			->twice()
+			->withNoArgs()
+			->andReturn([$area1, $area2]);
 
 		$area1->shouldReceive('getResources')
 			->twice()
@@ -242,9 +242,9 @@ class AuthorizatorTest extends Unit
 		$role2 = Mockery::mock(Role::class);
 
 		$this->zoneRepository->shouldReceive('findAll')
-		                     ->twice()
-		                     ->withNoArgs()
-		                     ->andReturn([$area1, $area2]);
+			->twice()
+			->withNoArgs()
+			->andReturn([$area1, $area2]);
 
 		$area1->shouldReceive('getResources')
 			->twice()

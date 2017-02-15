@@ -96,7 +96,11 @@ class Authorizator
 	{
 		$permissions = $this->getPermissions();
 
-		return !empty(array_intersect($permissions[$area][$resource][$privilege], $roles));
+		if (isset($permissions[$area][$resource][$privilege])) {
+			return !empty(array_intersect($permissions[$area][$resource][$privilege], $roles));
+		} else {
+			return false;
+		}
 	}
 
 
