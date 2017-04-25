@@ -6,6 +6,7 @@ use Codeception\Test\Unit;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mockery;
 use Mockery\MockInterface;
+use Nette\Caching\IStorage;
 use UnitTester;
 use Voonne\Security\Authorizator;
 use Voonne\Voonne\Model\Entities\Zone;
@@ -29,6 +30,11 @@ class AuthorizatorTest extends Unit
 	private $zoneRepository;
 
 	/**
+	 * @var MockInterface
+	 */
+	private $storage;
+
+	/**
 	 * @var Authorizator
 	 */
 	private $authorizator;
@@ -37,8 +43,9 @@ class AuthorizatorTest extends Unit
 	protected function _before()
 	{
 		$this->zoneRepository = Mockery::mock(ZoneRepository::class);
+		$this->storage = Mockery::mock(IStorage::class);
 
-		$this->authorizator = new Authorizator($this->zoneRepository);
+		$this->authorizator = new Authorizator($this->zoneRepository, $this->storage);
 	}
 
 
@@ -59,10 +66,19 @@ class AuthorizatorTest extends Unit
 		$role1 = Mockery::mock(Role::class);
 		$role2 = Mockery::mock(Role::class);
 
+		$this->storage->shouldReceive('read')
+			->twice()
+			->withAnyArgs()
+			->andReturn(null);
+
+		$this->storage->shouldReceive('write')
+			->twice()
+			->withAnyArgs();
+
 		$this->zoneRepository->shouldReceive('findAll')
-		                     ->twice()
-		                     ->withNoArgs()
-		                     ->andReturn([$area1, $area2]);
+			->twice()
+			->withNoArgs()
+			->andReturn([$area1, $area2]);
 
 		$area1->shouldReceive('getResources')
 			->twice()
@@ -149,6 +165,15 @@ class AuthorizatorTest extends Unit
 		$privilege2 = Mockery::mock(Privilege::class);
 		$role1 = Mockery::mock(Role::class);
 		$role2 = Mockery::mock(Role::class);
+
+		$this->storage->shouldReceive('read')
+			->twice()
+			->withAnyArgs()
+			->andReturn(null);
+
+		$this->storage->shouldReceive('write')
+			->twice()
+			->withAnyArgs();
 
 		$this->zoneRepository->shouldReceive('findAll')
 			->twice()
@@ -240,6 +265,15 @@ class AuthorizatorTest extends Unit
 		$privilege2 = Mockery::mock(Privilege::class);
 		$role1 = Mockery::mock(Role::class);
 		$role2 = Mockery::mock(Role::class);
+
+		$this->storage->shouldReceive('read')
+			->twice()
+			->withAnyArgs()
+			->andReturn(null);
+
+		$this->storage->shouldReceive('write')
+			->twice()
+			->withAnyArgs();
 
 		$this->zoneRepository->shouldReceive('findAll')
 			->twice()

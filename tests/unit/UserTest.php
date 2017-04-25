@@ -69,7 +69,8 @@ class UserTest extends Unit
 			$this->session,
 			$this->userRepository,
 			$this->domainRepository,
-			$this->authorizator);
+			$this->authorizator
+		);
 	}
 
 

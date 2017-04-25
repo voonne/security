@@ -10,7 +10,10 @@
 
 namespace Voonne\Security;
 
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use Nette\SmartObject;
+use Voonne\Voonne\Model\Entities\Resource;
 use Voonne\Voonne\Model\Entities\Zone;
 use Voonne\Voonne\Model\Entities\Privilege;
 use Voonne\Voonne\Model\Entities\Role;
@@ -25,12 +28,20 @@ class Authorizator
 	/**
 	 * @var ZoneRepository
 	 */
-	private $areaRepository;
+	private $zoneRepository;
+
+	/**
+	 * @var Cache
+	 */
+	private $cache;
+
+	const CACHE_NAMESPACE = 'Voonne.Security';
 
 
-	public function __construct(ZoneRepository $areaRepository)
+	public function __construct(ZoneRepository $zoneRepository, IStorage $storage)
 	{
-		$this->areaRepository = $areaRepository;
+		$this->zoneRepository = $zoneRepository;
+		$this->cache = new Cache($storage, self::CACHE_NAMESPACE);
 	}
 
 
@@ -38,6 +49,7 @@ class Authorizator
 	 * Has a user access to the area?
 	 *
 	 * @param string $area
+	 * @param array $roles
 	 *
 	 * @return bool
 	 */
@@ -64,6 +76,7 @@ class Authorizator
 	 *
 	 * @param string $area
 	 * @param string $resource
+	 * @param array $roles
 	 *
 	 * @return bool
 	 */
@@ -89,6 +102,7 @@ class Authorizator
 	 * @param string $area
 	 * @param string $resource
 	 * @param string $privilege
+	 * @param array $roles
 	 *
 	 * @return bool
 	 */
@@ -106,19 +120,25 @@ class Authorizator
 
 	private function getPermissions()
 	{
-		$permissions = [];
+		$permissions = $this->cache->load('permissions');
 
-		foreach ($this->areaRepository->findAll() as $area) {
-			/** @var Zone $area */
-			foreach ($area->getResources() as $resource) {
-				/** @var Resource $resource */
-				foreach ($resource->getPrivileges() as $privilege) {
-					/** @var Privilege $privilege */
-					$permissions[$area->getName()][$resource->getName()][$privilege->getName()] = array_map(function (Role $role) {
-						return $role->getName();
-					}, $privilege->getRoles()->toArray());
+		if (is_null($permissions)) {
+			$permissions = [];
+
+			foreach ($this->zoneRepository->findAll() as $area) {
+				/** @var Zone $area */
+				foreach ($area->getResources() as $resource) {
+					/** @var Resource $resource */
+					foreach ($resource->getPrivileges() as $privilege) {
+						/** @var Privilege $privilege */
+						$permissions[$area->getName()][$resource->getName()][$privilege->getName()] = array_map(function (Role $role) {
+							return $role->getName();
+						}, $privilege->getRoles()->toArray());
+					}
 				}
 			}
+
+			$this->cache->save('permissions', $permissions);
 		}
 
 		return $permissions;
