@@ -55,10 +55,10 @@ class AuthorizatorTest extends Unit
 	}
 
 
-	public function testHaveArea()
+	public function testHaveZone()
 	{
-		$area1 = Mockery::mock(Zone::class);
-		$area2 = Mockery::mock(Zone::class);
+		$zone1 = Mockery::mock(Zone::class);
+		$zone2 = Mockery::mock(Zone::class);
 		$resource1 = Mockery::mock(Resource::class);
 		$resource2 = Mockery::mock(Resource::class);
 		$privilege1 = Mockery::mock(Privilege::class);
@@ -78,24 +78,24 @@ class AuthorizatorTest extends Unit
 		$this->zoneRepository->shouldReceive('findAll')
 			->twice()
 			->withNoArgs()
-			->andReturn([$area1, $area2]);
+			->andReturn([$zone1, $zone2]);
 
-		$area1->shouldReceive('getResources')
+		$zone1->shouldReceive('getResources')
 			->twice()
 			->withNoArgs()
 			->andReturn([$resource1]);
 
-		$area1->shouldReceive('getName')
+		$zone1->shouldReceive('getName')
 			->twice()
 			->withNoArgs()
 			->andReturn('front');
 
-		$area2->shouldReceive('getResources')
+		$zone2->shouldReceive('getResources')
 			->twice()
 			->withNoArgs()
 			->andReturn([$resource2]);
 
-		$area2->shouldReceive('getName')
+		$zone2->shouldReceive('getName')
 			->twice()
 			->withNoArgs()
 			->andReturn('admin');
@@ -150,15 +150,15 @@ class AuthorizatorTest extends Unit
 			->withNoArgs()
 			->andReturn('admin');
 
-		$this->assertTrue($this->authorizator->haveArea('front', ['guest']));
-		$this->assertFalse($this->authorizator->haveArea('admin', ['guest']));
+		$this->assertTrue($this->authorizator->haveZone('front', ['guest']));
+		$this->assertFalse($this->authorizator->haveZone('admin', ['guest']));
 	}
 
 
 	public function testHaveResource()
 	{
-		$area1 = Mockery::mock(Zone::class);
-		$area2 = Mockery::mock(Zone::class);
+		$zone1 = Mockery::mock(Zone::class);
+		$zone2 = Mockery::mock(Zone::class);
 		$resource1 = Mockery::mock(Resource::class);
 		$resource2 = Mockery::mock(Resource::class);
 		$privilege1 = Mockery::mock(Privilege::class);
@@ -178,24 +178,24 @@ class AuthorizatorTest extends Unit
 		$this->zoneRepository->shouldReceive('findAll')
 			->twice()
 			->withNoArgs()
-			->andReturn([$area1, $area2]);
+			->andReturn([$zone1, $zone2]);
 
-		$area1->shouldReceive('getResources')
+		$zone1->shouldReceive('getResources')
 			->twice()
 			->withNoArgs()
 			->andReturn([$resource1]);
 
-		$area1->shouldReceive('getName')
+		$zone1->shouldReceive('getName')
 			->twice()
 			->withNoArgs()
 			->andReturn('front');
 
-		$area2->shouldReceive('getResources')
+		$zone2->shouldReceive('getResources')
 			->twice()
 			->withNoArgs()
 			->andReturn([$resource2]);
 
-		$area2->shouldReceive('getName')
+		$zone2->shouldReceive('getName')
 			->twice()
 			->withNoArgs()
 			->andReturn('admin');
@@ -257,8 +257,8 @@ class AuthorizatorTest extends Unit
 
 	public function testHavePrivilege()
 	{
-		$area1 = Mockery::mock(Zone::class);
-		$area2 = Mockery::mock(Zone::class);
+		$zone1 = Mockery::mock(Zone::class);
+		$zone2 = Mockery::mock(Zone::class);
 		$resource1 = Mockery::mock(Resource::class);
 		$resource2 = Mockery::mock(Resource::class);
 		$privilege1 = Mockery::mock(Privilege::class);
@@ -278,24 +278,24 @@ class AuthorizatorTest extends Unit
 		$this->zoneRepository->shouldReceive('findAll')
 			->twice()
 			->withNoArgs()
-			->andReturn([$area1, $area2]);
+			->andReturn([$zone1, $zone2]);
 
-		$area1->shouldReceive('getResources')
+		$zone1->shouldReceive('getResources')
 			->twice()
 			->withNoArgs()
 			->andReturn([$resource1]);
 
-		$area1->shouldReceive('getName')
+		$zone1->shouldReceive('getName')
 			->twice()
 			->withNoArgs()
 			->andReturn('front');
 
-		$area2->shouldReceive('getResources')
+		$zone2->shouldReceive('getResources')
 			->twice()
 			->withNoArgs()
 			->andReturn([$resource2]);
 
-		$area2->shouldReceive('getName')
+		$zone2->shouldReceive('getName')
 			->twice()
 			->withNoArgs()
 			->andReturn('admin');

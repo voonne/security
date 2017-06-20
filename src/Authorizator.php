@@ -46,19 +46,19 @@ class Authorizator
 
 
 	/**
-	 * Has a user access to the area?
+	 * Has a user access to the zone?
 	 *
-	 * @param string $area
+	 * @param string $zone
 	 * @param array $roles
 	 *
 	 * @return bool
 	 */
-	public function haveArea($area, array $roles)
+	public function haveZone($zone, array $roles)
 	{
 		$permissions = $this->getPermissions();
 
-		if (isset($permissions[$area])) {
-			foreach ($permissions[$area] as $resource) {
+		if (isset($permissions[$zone])) {
+			foreach ($permissions[$zone] as $resource) {
 				foreach ($resource as $privilege) {
 					if (!empty(array_intersect($privilege, $roles))) {
 						return true;
@@ -74,18 +74,18 @@ class Authorizator
 	/**
 	 * Has a user access to the resource?
 	 *
-	 * @param string $area
+	 * @param string $zone
 	 * @param string $resource
 	 * @param array $roles
 	 *
 	 * @return bool
 	 */
-	public function haveResource($area, $resource, array $roles)
+	public function haveResource($zone, $resource, array $roles)
 	{
 		$permissions = $this->getPermissions();
 
-		if (isset($permissions[$area][$resource])) {
-			foreach ($permissions[$area][$resource] as $privilege) {
+		if (isset($permissions[$zone][$resource])) {
+			foreach ($permissions[$zone][$resource] as $privilege) {
 				if (!empty(array_intersect($privilege, $roles))) {
 					return true;
 				}
@@ -99,19 +99,19 @@ class Authorizator
 	/**
 	 * Has a user access to the privilege?
 	 *
-	 * @param string $area
+	 * @param string $zone
 	 * @param string $resource
 	 * @param string $privilege
 	 * @param array $roles
 	 *
 	 * @return bool
 	 */
-	public function havePrivilege($area, $resource, $privilege, array $roles)
+	public function havePrivilege($zone, $resource, $privilege, array $roles)
 	{
 		$permissions = $this->getPermissions();
 
-		if (isset($permissions[$area][$resource][$privilege])) {
-			return !empty(array_intersect($permissions[$area][$resource][$privilege], $roles));
+		if (isset($permissions[$zone][$resource][$privilege])) {
+			return !empty(array_intersect($permissions[$zone][$resource][$privilege], $roles));
 		} else {
 			return false;
 		}
@@ -125,13 +125,13 @@ class Authorizator
 		if (is_null($permissions)) {
 			$permissions = [];
 
-			foreach ($this->zoneRepository->findAll() as $area) {
-				/** @var Zone $area */
-				foreach ($area->getResources() as $resource) {
+			foreach ($this->zoneRepository->findAll() as $zone) {
+				/** @var Zone $zone */
+				foreach ($zone->getResources() as $resource) {
 					/** @var Resource $resource */
 					foreach ($resource->getPrivileges() as $privilege) {
 						/** @var Privilege $privilege */
-						$permissions[$area->getName()][$resource->getName()][$privilege->getName()] = array_map(function (Role $role) {
+						$permissions[$zone->getName()][$resource->getName()][$privilege->getName()] = array_map(function (Role $role) {
 							return $role->getName();
 						}, $privilege->getRoles()->toArray());
 					}

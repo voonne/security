@@ -165,7 +165,7 @@ class UserTest extends Unit
 	}
 
 
-	public function testHaveArea()
+	public function testHaveZone()
 	{
 		$user = Mockery::mock(\Voonne\Voonne\Model\Entities\User::class);
 		$role = Mockery::mock(Role::class);
@@ -185,12 +185,12 @@ class UserTest extends Unit
 			->with('1')
 			->andReturn($user);
 
-		$this->authorizator->shouldReceive('haveArea')
+		$this->authorizator->shouldReceive('haveZone')
 			->once()
 			->with('front', ['guest'])
 			->andReturn(true);
 
-		$this->authorizator->shouldReceive('haveArea')
+		$this->authorizator->shouldReceive('haveZone')
 			->once()
 			->with('admin', ['guest'])
 			->andReturn(false);
@@ -205,8 +205,8 @@ class UserTest extends Unit
 			->withNoArgs()
 			->andReturn('guest');
 
-		$this->assertTrue($this->securityUser->haveArea('front'));
-		$this->assertFalse($this->securityUser->haveArea('admin'));
+		$this->assertTrue($this->securityUser->haveZone('front'));
+		$this->assertFalse($this->securityUser->haveZone('admin'));
 	}
 
 

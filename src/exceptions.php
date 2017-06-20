@@ -17,6 +17,18 @@ class AuthenticationException extends \Exception
 }
 
 
+class DuplicateEntryException extends \RuntimeException
+{
+
+}
+
+
+class InvalidArgumentException extends \InvalidArgumentException
+{
+
+}
+
+
 class InvalidStateException extends \RuntimeException
 {
 

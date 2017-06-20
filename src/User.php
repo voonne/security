@@ -126,44 +126,44 @@ class User
 
 
 	/**
-	 * Has a user access to the area?
+	 * Has a user access to the zone?
 	 *
-	 * @param string $area
+	 * @param string $zone
 	 *
 	 * @return bool
 	 */
-	public function haveArea($area)
+	public function haveZone($zone)
 	{
-		return $this->authorizator->haveArea($area, $this->getRoles());
+		return $this->authorizator->haveZone($zone, $this->getRoles());
 	}
 
 
 	/**
 	 * Has a user access to the resource?
 	 *
-	 * @param string $area
+	 * @param string $zone
 	 * @param string $resource
 	 *
 	 * @return bool
 	 */
-	public function haveResource($area, $resource)
+	public function haveResource($zone, $resource)
 	{
-		return $this->authorizator->haveResource($area, $resource, $this->getRoles());
+		return $this->authorizator->haveResource($zone, $resource, $this->getRoles());
 	}
 
 
 	/**
 	 * Has a user access to the privilege?
 	 *
-	 * @param string $area
+	 * @param string $zone
 	 * @param string $resource
 	 * @param string $privilege
 	 *
 	 * @return bool
 	 */
-	public function havePrivilege($area, $resource, $privilege)
+	public function havePrivilege($zone, $resource, $privilege)
 	{
-		return $this->authorizator->havePrivilege($area, $resource, $privilege, $this->getRoles());
+		return $this->authorizator->havePrivilege($zone, $resource, $privilege, $this->getRoles());
 	}
 
 
